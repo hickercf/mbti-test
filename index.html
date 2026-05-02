@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MBTI 性格测试</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="page" id="page-start">
+      <div class="card">
+        <div class="icon-brain">🧠</div>
+        <h1>MBTI 性格测试</h1>
+        <p class="subtitle">了解你的性格类型，发现真实的自己</p>
+        <div class="features">
+          <div class="feature"><span>📋</span> 共 28 道题目</div>
+          <div class="feature"><span>⏱️</span> 约 5 分钟完成</div>
+          <div class="feature"><span>🎯</span> 16 种人格类型</div>
+        </div>
+        <button id="btn-start" class="btn-primary">开始测试</button>
+      </div>
+    </div>
+
+    <div class="page hidden" id="page-quiz">
+      <div class="card quiz-card">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-text" id="progress-text">1 / 28</div>
+        <div class="dimension-indicator" id="dimension-indicator"></div>
+        <h2 class="question-text" id="question-text"></h2>
+        <div class="options" id="options"></div>
+        <div class="quiz-nav">
+          <button id="btn-prev" class="btn-nav" disabled>上一题</button>
+          <button id="btn-next" class="btn-primary">下一题</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page hidden" id="page-result">
+      <div class="card result-card">
+        <div class="result-type" id="result-type"></div>
+        <h2 class="result-title" id="result-title"></h2>
+        <p class="result-summary" id="result-summary"></p>
+        <div class="result-scores" id="result-scores"></div>
+        <div class="result-details" id="result-details"></div>
+        <button id="btn-restart" class="btn-primary">重新测试</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
