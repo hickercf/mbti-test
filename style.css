@@ -44,7 +44,7 @@
 body {
   font-family: var(--font-body);
   background-color: var(--color-bg);
-  background-image: url("bg-banner.png");
+  background-image: url("bg-banner.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -768,6 +768,15 @@ body {
   .scores__label { font-size: 1.125rem; }
 
   .details { padding: 16px; }
+}
+
+/* ── Mobile Background ── */
+
+@media (max-width: 768px) {
+  body {
+    background-image: url("bg-banner-mobile.jpg");
+    background-attachment: scroll;
+  }
 }
 
 /* ── Dark Mode Support ── */
