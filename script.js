@@ -1,4 +1,4 @@
-var questions = [
+const questions = [
   { text: "在聚会中，你通常更喜欢：", dimension: "EI", options: ["与很多人交流，认识新朋友", "只和熟悉的朋友深入聊天"] },
   { text: "你更倾向于如何获取能量：", dimension: "EI", options: ["通过与人互动和社交活动", "通过独处和自我反思"] },
   { text: "面对一个新环境，你会：", dimension: "EI", options: ["主动与他人交谈，快速融入", "先观察，等待别人来接触你"] },
@@ -29,7 +29,7 @@ var questions = [
   { text: "当一个计划被打乱时，你会：", dimension: "JP", options: ["感到不安，希望尽快恢复秩序", "觉得无所谓，顺势调整"] }
 ];
 
-var mbtiTypes = {
+const mbtiTypes = {
   "INTJ": {
     title: "建筑师",
     summary: "富有战略眼光的独立思考者，追求知识与创新。",
@@ -144,66 +144,73 @@ var mbtiTypes = {
   }
 };
 
-var state = {
+const state = {
   currentQuestion: 0,
   answers: new Array(questions.length).fill(null),
-  scores: { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 },
-  timerInterval: null
+  scores: { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 }
 };
 
-var pages = {
+const pages = {
   start: document.getElementById("page-start"),
   quiz: document.getElementById("page-quiz"),
   result: document.getElementById("page-result")
 };
 
-var elProgressFill = document.getElementById("progress-fill");
-var elProgressText = document.getElementById("progress-text");
-var elDimIndicator = document.getElementById("dimension-indicator");
-var elQuestionText = document.getElementById("question-text");
-var elOptions = document.getElementById("options");
-var elBtnPrev = document.getElementById("btn-prev");
-var elBtnNext = document.getElementById("btn-next");
-var elResultType = document.getElementById("result-type");
-var elResultTitle = document.getElementById("result-title");
-var elResultSummary = document.getElementById("result-summary");
-var elResultScores = document.getElementById("result-scores");
-var elResultDetails = document.getElementById("result-details");
+const elProgressFill = document.getElementById("progress-fill");
+const elProgressBar = document.querySelector(".progress-bar");
+const elProgressCurrent = document.getElementById("progress-current");
+const elProgressTotal = document.getElementById("progress-total");
+const elDimIndicator = document.getElementById("dimension-indicator");
+const elQuestionText = document.getElementById("question-text");
+const elOptions = document.getElementById("options");
+const elBtnPrev = document.getElementById("btn-prev");
+const elBtnNext = document.getElementById("btn-next");
+const elResultType = document.getElementById("result-type");
+const elResultTitle = document.getElementById("result-title");
+const elResultSummary = document.getElementById("result-summary");
+const elResultScores = document.getElementById("result-scores");
+const elResultDetails = document.getElementById("result-details");
+const elError = document.getElementById("error-message");
 
 function showPage(name) {
-  Object.keys(pages).forEach(function (k) {
-    pages[k].classList.add("hidden");
-  });
+  Object.keys(pages).forEach(k => pages[k].classList.add("hidden"));
   pages[name].classList.remove("hidden");
 }
 
 function getDimensionLabel(dim) {
-  var map = { EI: "外向 E / 内向 I", SN: "实感 S / 直觉 N", TF: "思考 T / 情感 F", JP: "判断 J / 感知 P" };
+  const map = { EI: "外向 E / 内向 I", SN: "实感 S / 直觉 N", TF: "思考 T / 情感 F", JP: "判断 J / 感知 P" };
   return map[dim] || "";
 }
 
 function renderQuestion() {
-  var q = questions[state.currentQuestion];
+  elError.classList.add("hidden");
+
+  const q = questions[state.currentQuestion];
   elQuestionText.textContent = q.text;
   elDimIndicator.textContent = getDimensionLabel(q.dimension);
 
   elOptions.innerHTML = "";
-  q.options.forEach(function (opt, i) {
-    var btn = document.createElement("button");
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
     btn.className = "option-btn";
+    btn.type = "button";
     btn.textContent = opt;
+    btn.setAttribute("role", "radio");
+    btn.setAttribute("aria-checked", state.answers[state.currentQuestion] === i ? "true" : "false");
     if (state.answers[state.currentQuestion] === i) {
       btn.classList.add("selected");
     }
-    btn.addEventListener("click", function () {
-      setAnswer(i);
-    });
+    btn.addEventListener("click", () => setAnswer(i));
     elOptions.appendChild(btn);
   });
 
-  var pct = ((state.currentQuestion + 1) / questions.length) * 100;
+  const num = state.currentQuestion + 1;
+  const pct = (num / questions.length) * 100;
   elProgressFill.style.width = pct + "%";
-  elProgressText.textContent = (state.currentQuestion + 1) + " / " + questions.length;
+  elProgressBar.setAttribute("aria-valuenow", num);
+  elProgressCurrent.textContent = num;
+  elProgressTotal.textContent = String(questions.length);
+
   elBtnPrev.disabled = state.currentQuestion === 0;
 
   if (state.currentQuestion === questions.length - 1) {
@@ -211,6 +218,8 @@ function renderQuestion() {
   } else {
     elBtnNext.textContent = "下一题";
   }
+
+  elBtnNext.focus();
 }
 
 function setAnswer(index) {
@@ -219,66 +228,84 @@ function setAnswer(index) {
 }
 
 function calculateScores() {
-  state.scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+  const s = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
 
-  questions.forEach(function (q, i) {
-    var answer = state.answers[i];
+  questions.forEach((q, i) => {
+    const answer = state.answers[i];
     if (answer === null) return;
     if (q.dimension === "EI") {
-      answer === 0 ? state.scores.E++ : state.scores.I++;
+      answer === 0 ? s.E++ : s.I++;
     } else if (q.dimension === "SN") {
-      answer === 0 ? state.scores.S++ : state.scores.N++;
+      answer === 0 ? s.S++ : s.N++;
     } else if (q.dimension === "TF") {
-      answer === 0 ? state.scores.T++ : state.scores.F++;
+      answer === 0 ? s.T++ : s.F++;
     } else if (q.dimension === "JP") {
-      answer === 0 ? state.scores.J++ : state.scores.P++;
+      answer === 0 ? s.J++ : s.P++;
     }
   });
+
+  state.scores = s;
 }
 
 function getType() {
   calculateScores();
-  var type = "";
-  type += state.scores.E >= state.scores.I ? "E" : "I";
-  type += state.scores.S >= state.scores.N ? "S" : "N";
-  type += state.scores.T >= state.scores.F ? "T" : "F";
-  type += state.scores.J >= state.scores.P ? "J" : "P";
+  const s = state.scores;
+  let type = "";
+  type += s.E >= s.I ? "E" : "I";
+  type += s.S >= s.N ? "S" : "N";
+  type += s.T >= s.F ? "T" : "F";
+  type += s.J >= s.P ? "J" : "P";
   return type;
 }
 
 function getPct(a, b) {
-  var sum = a + b;
+  const sum = a + b;
   if (sum === 0) return "50%";
   return Math.round((Math.max(a, b) / sum) * 100) + "%";
 }
 
 function renderResult() {
-  var type = getType();
-  var info = mbtiTypes[type];
+  const type = getType();
+  const info = mbtiTypes[type];
+  if (!info) {
+    elResultType.textContent = "?";
+    elResultTitle.textContent = "无法识别";
+    elResultSummary.textContent = "请重新测试";
+    elResultScores.innerHTML = "";
+    elResultDetails.innerHTML = "<p>出现异常，请重新开始测试。</p>";
+    showPage("result");
+    return;
+  }
+
   elResultType.textContent = type;
   elResultTitle.textContent = info.title;
   elResultSummary.textContent = info.summary;
 
-  var score = state.scores;
+  const s = state.scores;
   elResultScores.innerHTML = [
-    { label: score.E >= score.I ? "E" : "I", pct: getPct(score.E, score.I), dim: "外向 / 内向" },
-    { label: score.S >= score.N ? "S" : "N", pct: getPct(score.S, score.N), dim: "实感 / 直觉" },
-    { label: score.T >= score.F ? "T" : "F", pct: getPct(score.T, score.F), dim: "思考 / 情感" },
-    { label: score.J >= score.P ? "J" : "P", pct: getPct(score.J, score.P), dim: "判断 / 感知" }
-  ].map(function (s) {
-    return '<div class="score-item"><div class="score-label">' + s.label + '</div><div class="score-bar">' + s.dim + '</div><div class="score-pct">' + s.pct + '</div></div>';
-  }).join("");
+    { label: s.E >= s.I ? "E" : "I", pct: getPct(s.E, s.I), dim: "外向 / 内向" },
+    { label: s.S >= s.N ? "S" : "N", pct: getPct(s.S, s.N), dim: "实感 / 直觉" },
+    { label: s.T >= s.F ? "T" : "F", pct: getPct(s.T, s.F), dim: "思考 / 情感" },
+    { label: s.J >= s.P ? "J" : "P", pct: getPct(s.J, s.P), dim: "判断 / 感知" }
+  ].map(item =>
+    `<div class="score-item"><div class="score-label">${item.label}</div><div class="score-bar">${item.dim}</div><div class="score-pct">${item.pct}</div></div>`
+  ).join("");
 
   elResultDetails.innerHTML =
-    '<h3>优势</h3><ul>' + info.strengths.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ul>" +
-    '<h3 style="margin-top:14px;">需注意</h3><ul>' + info.weaknesses.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ul>" +
-    '<h3 style="margin-top:14px;">适合职业方向</h3><p>' + info.career.join("、") + "</p>";
+    `<h3>优势</h3><ul>${info.strengths.map(s => `<li>${s}</li>`).join("")}</ul>` +
+    `<h3 style="margin-top:14px;">需注意</h3><ul>${info.weaknesses.map(s => `<li>${s}</li>`).join("")}</ul>` +
+    `<h3 style="margin-top:14px;">适合职业方向</h3><p>${info.career.join("、")}</p>`;
 
   showPage("result");
 }
 
 function goNext() {
-  if (state.answers[state.currentQuestion] === null) return;
+  if (state.answers[state.currentQuestion] === null) {
+    elError.classList.remove("hidden");
+    return;
+  }
+  elError.classList.add("hidden");
+
   if (state.currentQuestion < questions.length - 1) {
     state.currentQuestion++;
     renderQuestion();
@@ -294,10 +321,14 @@ function goPrev() {
   }
 }
 
-document.getElementById("btn-start").addEventListener("click", function () {
+function resetTest() {
   state.currentQuestion = 0;
   state.answers = new Array(questions.length).fill(null);
   state.scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+}
+
+document.getElementById("btn-start").addEventListener("click", () => {
+  resetTest();
   showPage("quiz");
   renderQuestion();
 });
@@ -305,17 +336,15 @@ document.getElementById("btn-start").addEventListener("click", function () {
 elBtnNext.addEventListener("click", goNext);
 elBtnPrev.addEventListener("click", goPrev);
 
-document.getElementById("btn-restart").addEventListener("click", function () {
-  state.currentQuestion = 0;
-  state.answers = new Array(questions.length).fill(null);
-  state.scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+document.getElementById("btn-restart").addEventListener("click", () => {
+  resetTest();
   showPage("start");
 });
 
-document.addEventListener("keydown", function (e) {
+document.addEventListener("keydown", e => {
   if (pages.quiz.classList.contains("hidden")) return;
-  if (e.key === "ArrowRight") goNext();
-  if (e.key === "ArrowLeft") goPrev();
-  if (e.key === "1" && questions[state.currentQuestion]) setAnswer(0);
-  if (e.key === "2" && questions[state.currentQuestion]) setAnswer(1);
+  if (e.key === "ArrowLeft") { e.preventDefault(); goPrev(); }
+  if (e.key === "ArrowRight") { e.preventDefault(); goNext(); }
+  if (e.key === "1" && questions[state.currentQuestion]) { e.preventDefault(); setAnswer(0); }
+  if (e.key === "2" && questions[state.currentQuestion]) { e.preventDefault(); setAnswer(1); }
 });

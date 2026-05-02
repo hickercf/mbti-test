@@ -2,53 +2,64 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#667eea">
   <title>MBTI 性格测试</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <style>
+    html { color-scheme: light; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+    .skip-link { position: absolute; top: -100%; left: 8px; z-index: 1000; padding: 8px 16px; background: #667eea; color: #fff; border-radius: 0 0 8px 8px; font-size: 1rem; text-decoration: none; }
+    .skip-link:focus { top: 0; }
+  </style>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <div class="page" id="page-start">
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <main id="main-content" class="container">
+    <section class="page" id="page-start" aria-label="开始页面">
       <div class="card">
-        <div class="icon-brain">🧠</div>
+        <div class="icon-brain" aria-hidden="true">🧠</div>
         <h1>MBTI 性格测试</h1>
         <p class="subtitle">了解你的性格类型，发现真实的自己</p>
-        <div class="features">
-          <div class="feature"><span>📋</span> 共 28 道题目</div>
-          <div class="feature"><span>⏱️</span> 约 5 分钟完成</div>
-          <div class="feature"><span>🎯</span> 16 种人格类型</div>
-        </div>
-        <button id="btn-start" class="btn-primary">开始测试</button>
+        <ul class="features" aria-label="测试概况">
+          <li class="feature"><span aria-hidden="true">📋</span> 共 28 道题目</li>
+          <li class="feature"><span aria-hidden="true">⏱️</span> 约 5 分钟完成</li>
+          <li class="feature"><span aria-hidden="true">🎯</span> 16 种人格类型</li>
+        </ul>
+        <button id="btn-start" class="btn-primary" type="button">开始测试</button>
       </div>
-    </div>
+    </section>
 
-    <div class="page hidden" id="page-quiz">
+    <section class="page hidden" id="page-quiz" aria-label="答题页面" role="form">
       <div class="card quiz-card">
-        <div class="progress-bar">
+        <div class="progress-bar" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="28" aria-label="答题进度">
           <div class="progress-fill" id="progress-fill"></div>
         </div>
-        <div class="progress-text" id="progress-text">1 / 28</div>
-        <div class="dimension-indicator" id="dimension-indicator"></div>
+        <p class="progress-text" id="progress-text" aria-live="polite" aria-atomic="true"><span id="progress-current">1</span> / <span id="progress-total">28</span></p>
+        <p class="dimension-indicator" id="dimension-indicator"></p>
         <h2 class="question-text" id="question-text"></h2>
-        <div class="options" id="options"></div>
+        <div class="options" id="options" role="radiogroup" aria-labelledby="question-text"></div>
         <div class="quiz-nav">
-          <button id="btn-prev" class="btn-nav" disabled>上一题</button>
-          <button id="btn-next" class="btn-primary">下一题</button>
+          <button id="btn-prev" class="btn-nav" type="button" disabled>上一题</button>
+          <button id="btn-next" class="btn-primary" type="button">下一题</button>
         </div>
       </div>
-    </div>
+      <div class="error-message hidden" id="error-message" role="alert">请选择一个选项后再继续</div>
+    </section>
 
-    <div class="page hidden" id="page-result">
-      <div class="card result-card">
+    <section class="page hidden" id="page-result" aria-label="测试结果页面">
+      <div class="card result-card" aria-live="polite" aria-atomic="true">
         <div class="result-type" id="result-type"></div>
         <h2 class="result-title" id="result-title"></h2>
         <p class="result-summary" id="result-summary"></p>
         <div class="result-scores" id="result-scores"></div>
         <div class="result-details" id="result-details"></div>
-        <button id="btn-restart" class="btn-primary">重新测试</button>
+        <button id="btn-restart" class="btn-primary" type="button">重新测试</button>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <script src="script.js"></script>
 </body>
