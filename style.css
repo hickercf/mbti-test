@@ -43,7 +43,12 @@
 
 body {
   font-family: var(--font-body);
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-image: url("bg-banner.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
@@ -55,47 +60,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: var(--color-text);
   line-height: 1.6;
-}
-
-/* ── Background Decoration ── */
-
-.bg-decoration {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.bg-circle {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.5;
-}
-
-.bg-circle--1 {
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(184, 105, 90, 0.1), transparent 70%);
-  top: -200px;
-  right: -200px;
-}
-
-.bg-circle--2 {
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(212, 168, 83, 0.08), transparent 70%);
-  bottom: -100px;
-  left: -100px;
-}
-
-.bg-circle--3 {
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(61, 90, 92, 0.06), transparent 70%);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 /* ── Container ── */
@@ -821,10 +785,6 @@ body {
     --color-border-light: #332d28;
     --color-error-bg: #3d2020;
   }
-
-  .bg-circle--1 { opacity: 0.3; }
-  .bg-circle--2 { opacity: 0.2; }
-  .bg-circle--3 { opacity: 0.15; }
 
   .scale-track { background: #332d28; }
 
