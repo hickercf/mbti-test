@@ -44,11 +44,6 @@
 body {
   font-family: var(--font-body);
   background-color: var(--color-bg);
-  background-image: url("bg-banner.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
@@ -60,6 +55,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: var(--color-text);
   line-height: 1.6;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url("bg-banner.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* ── Container ── */
@@ -773,9 +780,8 @@ body {
 /* ── Mobile Background ── */
 
 @media (max-width: 768px) {
-  body {
+  body::before {
     background-image: url("bg-banner-mobile.jpg");
-    background-attachment: scroll;
   }
 }
 
